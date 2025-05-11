@@ -6,111 +6,29 @@
   <title>Spartan Race Gear Checklist</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--primary:#c62828;--danger:#ef5350;--bg:#111;--panel:#1d1d1d;--text:#e0e0e0;--req:#ffca28;}
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Bebas Neue',sans-serif;background:var(--bg) url('https://images.unsplash.com/photo-1452626038306-7dbff8b4a081?auto=format&fit=crop&w=1500&q=80') center/cover fixed;color:var(--text);min-height:100vh;padding:2rem 1rem 6rem;backdrop-filter:brightness(.6);}body::-webkit-scrollbar{display:none;}
-   
-    /* controls */
-    #controls{display:flex;justify-content:center;gap:.75rem;margin-bottom:1.2rem;flex-wrap:nowrap;}
-    #notify-btn,#lang-btn{display:flex;align-items:center;justify-content:center;height:42px;border:2px solid var(--primary);border-radius:4px;background:#000;color:var(--text);font-size:clamp(.8rem,4vw,1rem);cursor:pointer;white-space:nowrap;transition:opacity .2s;}#notify-btn{width:180px;}#lang-btn{width:78px;}#hide-done{flex:0 0 160px;display:flex;align-items:center;gap:.4rem;white-space:nowrap;font-size:1rem;}#hide-done input{width:1rem;height:1rem;accent-color:var(--primary);}#notify-btn:hover,#lang-btn:hover{opacity:.85;}
-    /* accordion */
-    details{margin-bottom:.8rem;background:rgba(0,0,0,.45);border-left:4px solid var(--primary);border-radius:6px;backdrop-filter:blur(2px);}summary{position:relative;height:48px;display:flex;align-items:center;padding:0 2.2rem 0 1rem;font-size:1.25rem;font-family:'Noto Sans JP',sans-serif;color:var(--primary);cursor:pointer;}summary::after{content:'';position:absolute;right:1rem;top:50%;width:0;height:0;border:6px solid transparent;border-left-color:var(--text);transform:translateY(-50%);transition:transform .25s;}details[open] summary::after{transform:translateY(-50%) rotate(90deg);}ul.section-list{list-style:none;margin:0;padding:.4rem .8rem 1rem;display:flex;flex-direction:column;gap:.7rem;}
-    li.item{display:flex;align-items:center;gap:.55rem;background:rgba(0,0,0,.55);padding:0 .75rem;height:46px;border-radius:4px;}li.item input{width:1.15rem;height:1.15rem;accent-color:var(--primary);}li.item label{flex:1;display:flex;align-items:center;gap:.45rem;font-family:'Noto Sans JP',sans-serif;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}li.item input:checked+label{opacity:.35;text-decoration:line-through;}
-    .req-tag{background:var(--req);color:#000;font-size:.75rem;padding:.05rem .32rem;border-radius:3px;font-weight:600;}
-    /* popup */
-    #popup{position:fixed;inset:0;display:flex;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .25s;}#popup.show{opacity:1;pointer-events:auto;}
-    #popup-box{background:var(--panel);border:2px solid var(--primary);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.8);width:min(92vw,400px);margin-top:100px;max-height:90vh;padding:1.6rem 1.4rem;display:flex;flex-direction:column;gap:1rem;transition:background .4s ease;}
-    #popup-box.complete{background:url('https://images.unsplash.com/photo-1520220051596-fd2aa4d6f55f?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;}
-    #popup-title{font-size:1.6rem;color:var(--primary);text-align:center;margin:0;}#popup-title.hidden{display:none;}
-    #popup-content{flex:1 1 auto;overflow-y:auto;max-height:calc(1.4em*7 + .35rem*6);}#popup-box.complete #popup-content{overflow:hidden;}
-    .complete-msg{font-family:'Bebas Neue',sans-serif;text-align:center;line-height:1.2;color:#fff;text-shadow:0 0 8px #000;}
-    .complete-msg .big{font-size:2rem;letter-spacing:.05em;}
-    .complete-msg .small{font-size:1.1rem;letter-spacing:.05em;}
-    #close-btn{align-self:center;width:120px;padding:.55rem 1.4rem;border:none;border-radius:4px;background:var(--danger);color:#fff;cursor:pointer;}
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <h1 id="page-title"></h1>
-  <div id="controls"><button id="notify-btn"></button><button id="lang-btn"></button><label id="hide-done"><input type="checkbox"><span id="hide-text"></span></label></div>
+  <div id="controls">
+    <button id="notify-btn"></button>
+    <button id="lang-btn"></button>
+    <label id="hide-done">
+      <input type="checkbox">
+      <span id="hide-text"></span>
+    </label>
+  </div>
   <div id="accordion"></div>
-  <div id="popup"><div id="popup-box"><h2 id="popup-title"></h2><div id="popup-content"></div><button id="close-btn">OK</button></div></div>
-<script>
-(()=>{
-  /* ---------- data ---------- */
-  const items=[
-    {id:'shoes',jp:'トレイル／ランニングシューズ',en:'Trail / Running Shoes',req:true},
-    {id:'apparel',jp:'速乾ウェア',en:'Quick‑dry Apparel',req:true},
-    {id:'waiver',jp:'参加同意書（署名済）',en:'Signed Waiver',req:true},
-    {id:'confirmation',jp:'参加確認（QRコード）',en:'Race Confirmation (QR)',req:true},
-    {id:'id',jp:'写真付き身分証',en:'Photo ID',req:true},
-    {id:'gloves',jp:'グリップグローブ',en:'Grip Gloves'},
-    {id:'headband',jp:'ヘッドバンド／バフ',en:'Headband / Buff'},
-    {id:'sunglasses',jp:'サングラス',en:'Sunglasses'},
-    {id:'hydration',jp:'ハイドレーションボトル',en:'Hydration Flask'},
-    {id:'gel',jp:'エナジージェル',en:'Energy Gel'},
-    {id:'salt',jp:'塩タブレット',en:'Salt Tabs'},
-    {id:'towel',jp:'ハンドタオル',en:'Hand Towel'},
-    {id:'change',jp:'着替え',en:'Change of Clothes'},
-    {id:'sandal',jp:'サンダル',en:'Sandals'},
-    {id:'ice',jp:'アイシングスプレー／テープ',en:'Ice Spray / Tape'},
-    {id:'sunblock',jp:'日焼け止め',en:'Sunblock'},
-    {id:'ticket',jp:'駐車券／交通ICカード',en:'Parking Pass / IC Card'},
-    {id:'phonecase',jp:'防水スマホケース',en:'Waterproof Phone Case'}
-  ];
-  /* ---------- state ---------- */
-  const STORE='spartan-check-v1';
-  const load=()=>{try{return JSON.parse(localStorage.getItem(STORE))||{};}catch{return {};}};
-  let state=load(); if(!Array.isArray(state.checked)) state.checked=[];
-  let lang=state.lang||'jp';
-  const TXT={
-    jp:{req:'必須アイテム',opt:'任意アイテム',reqLbl:'必須',hide:'完了を隠す',notify:'忘れ物を確認',popup:'忘れ物チェック',completeBig:'MISSION COMPLETE',completeSmall:'SPATENA 始動',switch:'EN',title:'スパルタンレース持ち物リスト'},
-    en:{req:'Required Items',opt:'Optional Items',reqLbl:'REQ',hide:'Hide checked',notify:'Check Missing',popup:'Checklist',completeBig:'MISSION COMPLETE',completeSmall:'SPATENA LAUNCH',switch:'JP',title:'Spartan Race Gear Checklist'}
-  };
-  /* ---------- elements ---------- */
-  const qs=id=>document.getElementById(id);
-  const acc=qs('accordion'), titleEl=qs('page-title'), notifyBtn=qs('notify-btn'), langBtn=qs('lang-btn');
-  const hideChk=qs('hide-done').querySelector('input'), hideText=qs('hide-text');
-  const popup=qs('popup'), box=qs('popup-box'), popTitle=qs('popup-title'), popContent=qs('popup-content');
-  /* ---------- functions ---------- */
-  function buildAccordion(){
-    acc.innerHTML='';
-    const t=TXT[lang];
-    const secs=[{k:'reqOpen',title:t.req,items:items.filter(i=>i.req)},{k:'optOpen',title:t.opt,items:items.filter(i=>!i.req)}];
-    secs.forEach(sec=>{
-      const det=document.createElement('details'); det.open=state[sec.k]??true;
-      det.addEventListener('toggle',()=>{state[sec.k]=det.open;save();});
-      const sum=document.createElement('summary'); sum.textContent=sec.title; det.append(sum);
-      const ul=document.createElement('ul'); ul.className='section-list';
-      sec.items.forEach(it=>{
-        const li=document.createElement('li'); li.className='item';
-        const cb=document.createElement('input'); cb.type='checkbox'; cb.id=it.id; cb.checked=state.checked.includes(it.id);
-        cb.addEventListener('change',()=>{if(cb.checked){state.checked.push(it.id);}else{state.checked=state.checked.filter(x=>x!==it.id);}save();applyHide();});
-        const lab=document.createElement('label'); lab.htmlFor=it.id; lab.innerHTML=`${it[lang]}${it.req?` <span class='req-tag'>${t.reqLbl}</span>`:''}`;
-        li.append(cb,lab); ul.append(li);
-      });
-      det.append(ul); acc.append(det);
-    });
-  }
-  function applyHide(){acc.querySelectorAll('.item').forEach(li=>li.style.display=(hideChk.checked && li.querySelector('input').checked)?'none':'flex');}
-  function save(){localStorage.setItem(STORE,JSON.stringify(state));}
-  function renderText(){const t=TXT[lang];document.documentElement.lang=lang==='jp'?'ja':'en';titleEl.textContent=t.title;notifyBtn.textContent=t.notify;langBtn.textContent=t.switch;hideText.textContent=t.hide;popTitle.textContent=t.popup;}
-  function render(){renderText();buildAccordion();hideChk.checked=state.hideDone||false;applyHide();}
-  /* ---------- events ---------- */
-  langBtn.onclick=()=>{lang=lang==='jp'?'en':'jp';state.lang=lang;save();render();};
-  hideChk.onchange=e=>{state.hideDone=e.target.checked;save();applyHide();};
-  notifyBtn.onclick=()=>{
-    const miss=items.filter(i=>i.req && !state.checked.includes(i.id));
-    if(miss.length){box.classList.remove('complete'); popTitle.classList.remove('hidden'); popContent.innerHTML='<ul>'+miss.map(m=>`<li>${m[lang]}</li>`).join('')+'</ul>';}
-    else{box.classList.add('complete'); popTitle.classList.add('hidden'); popContent.innerHTML=`<div class='complete-msg'><span class='big'>${TXT[lang].completeBig}</span><br><span class='small'>${TXT[lang].completeSmall}</span></div>`;}
-    popup.classList.add('show');
-  };
-  qs('close-btn').onclick=()=>popup.classList.remove('show');
-  popup.onclick=e=>{if(e.target.id==='popup')popup.classList.remove('show');};
-  /* ---------- init ---------- */
-  render();
-})();
-</script>
+
+  <div id="popup">
+    <div id="popup-box">
+      <h2 id="popup-title"></h2>
+      <div id="popup-content"></div>
+      <button id="close-btn">OK</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
