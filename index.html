@@ -11,19 +11,19 @@
     :root { --primary:#c62828; --danger:#ef5350; --bg:#111; --panel:#1d1d1d; --text:#e0e0e0; --req:#ffca28; }
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Bebas Neue',sans-serif;background:var(--bg) url('https://images.unsplash.com/photo-1452626038306-7dbff8b4a081?auto=format&fit=crop&w=1500&q=80') center/cover fixed;color:var(--text);min-height:100vh;padding:2rem 1rem 6rem;backdrop-filter:brightness(.6);}  
-    h1{font-family:'Noto Sans JP','Bebas Neue',sans-serif;font-size:2.2rem;line-height:1;height:2.6rem;text-align:center;color:var(--primary);margin-bottom:1rem;text-shadow:0 0 6px #000;}
+    h1{font-family:'Noto Sans JP','Bebas Neue',sans-serif;font-size:clamp(1.6rem,8vw,2.2rem);line-height:1;height:2.6rem;text-align:center;color:var(--primary);margin-bottom:1rem;text-shadow:0 0 6px #000;white-space:nowrap;}
 
     /* Controls */
     #controls{display:flex;gap:.75rem;justify-content:center;flex-wrap:nowrap;margin-bottom:1.2rem;}
-    #notify-btn,#lang-btn{height:42px;line-height:1;padding:.55rem .9rem;border:2px solid var(--primary);border-radius:4px;background:#000;color:var(--text);font-size:1rem;cursor:pointer;transition:opacity .2s;box-sizing:border-box;}
-    #notify-btn{width:180px;} #lang-btn{width:78px;} #notify-btn:hover,#lang-btn:hover{opacity:.85;}
+    #notify-btn,#lang-btn{height:42px;line-height:1;padding:.55rem .9rem;border:2px solid var(--primary);border-radius:4px;background:#000;color:var(--text);font-size:clamp(.8rem,4vw,1rem);cursor:pointer;transition:opacity .2s;box-sizing:border-box;white-space:nowrap;}
+    #notify-btn{min-width:150px;} #lang-btn{width:78px;} #notify-btn:hover,#lang-btn:hover{opacity:.85;}
     #hide-done{flex:0 0 160px;width:160px;display:flex;align-items:center;gap:.4rem;font-size:1rem;cursor:pointer;white-space:nowrap;overflow:hidden;}
     #hide-done input{width:1rem;height:1rem;accent-color:var(--primary);}
 
     /* Accordion */
     details{margin-bottom:.8rem;background:rgba(0,0,0,.45);border-left:4px solid var(--primary);border-radius:6px;backdrop-filter:blur(2px);}  
     summary{position:relative;height:48px;display:flex;align-items:center;gap:.5rem;padding:0 2.2rem 0 1rem;cursor:pointer;list-style:none;font-family:'Noto Sans JP',sans-serif;font-size:1.25rem;color:var(--primary);line-height:1;}
-    summary .req-tag{margin-left:.4rem;}
+    summary .req-tag{margin-left:.4rem;white-space:nowrap;}
     summary::after{content:'';position:absolute;right:1rem;top:50%;width:0;height:0;border:6px solid transparent;border-left-color:var(--text);transform:translateY(-50%) rotate(0deg);transition:transform .25s;}
     details[open] summary::after{transform:translateY(-50%) rotate(90deg);} 
     ul.section-list{list-style:none;margin:0;padding:.4rem .8rem 1rem;display:flex;flex-direction:column;gap:.7rem;}
@@ -40,16 +40,18 @@
     #popup{position:fixed;inset:0;display:flex;align-items:flex-start;justify-content:center;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .25s;}
     #popup.show{opacity:1;pointer-events:auto;}
     #popup-box{background:var(--panel);border:2px solid var(--primary);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.8);width:min(92vw,400px);max-height:90vh;margin-top:100px;padding:1.6rem 1.4rem;display:flex;flex-direction:column;gap:1rem;}
-    #popup-box h2{font-size:1.6rem;color:var(--primary);margin:0;text-align:center;line-height:1;}
+    #popup-box h2{font-size:1.6rem;color:var(--primary);margin:0;text-align:center;line-height:1;white-space:nowrap;}
     #popup-content{flex:1 1 auto;overflow-y:auto;}
     #popup-content ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem;}
     #popup-content ul li{border-bottom:1px solid rgba(255,255,255,.1);padding:.3rem 0;font-size:1.2rem;}
-    #close-btn{align-self:center;width:120px;padding:.55rem 1.4rem;border:none;border-radius:4px;background:var(--danger);color:#fff;font-size:1rem;cursor:pointer;transition:opacity .2s;}
+    #close-btn{align-self:center;width:120px;flex:0 0 auto;padding:.55rem 1.4rem;border:none;border-radius:4px;background:var(--danger);color:#fff;font-size:1rem;cursor:pointer;transition:opacity .2s;}
     #close-btn:hover{opacity:.9;}
 
     /* Language override */
     html[lang="en"] h1{font-family:'Bebas Neue',sans-serif;}
     html[lang="en"] summary,html[lang="en"] li.item label{font-family:'Bebas Neue',sans-serif;}
+
+    @media(max-width:360px){#notify-btn{min-width:140px;padding:.55rem .6rem;}}
   </style>
 </head>
 <body>
@@ -71,89 +73,111 @@
   </div>
 
 <script>
+// ===== Utilities =====
+const STORE_KEY="spartan-checklist-v1";
+const load=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch{return {};}};
+const save=obj=>localStorage.setItem(STORE_KEY,JSON.stringify(obj));
+
 // ===== Data =====
 const items=[
-  {id:'shoes',jp:'トレイル／ランニングシューズ',en:'Trail / Running Shoes',req:true},
-  {id:'apparel',jp:'速乾ウェア',en:'Quick‑dry Apparel',req:true},
-  {id:'waiver',jp:'参加同意書（署名済）',en:'Signed Waiver',req:true},
-  {id:'confirmation',jp:'参加確認（QRコード）',en:'Race Confirmation (QR)',req:true},
-  {id:'id',jp:'写真付き身分証',en:'Photo ID',req:true},
-  {id:'gloves',jp:'グリップグローブ',en:'Grip Gloves'},
-  {id:'headband',jp:'ヘッドバンド／バフ',en:'Headband / Buff'},
-  {id:'sunglasses',jp:'サングラス',en:'Sunglasses'},
-  {id:'hydration',jp:'ハイドレーションボトル',en:'Hydration Flask'},
-  {id:'gel',jp:'エナジージェル',en:'Energy Gel'},
-  {id:'salt',jp:'塩タブレット',en:'Salt Tabs'},
-  {id:'towel',jp:'ハンドタオル',en:'Hand Towel'},
-  {id:'change',jp:'着替え',en:'Change of Clothes'},
-  {id:'sandal',jp:'サンダル',en:'Sandals'},
-  {id:'ice',jp:'アイシングスプレー／テープ',en:'Ice Spray / Tape'},
-  {id:'sunblock',jp:'日焼け止め',en:'Sunblock'},
-  {id:'ticket',jp:'駐車券／交通ICカード',en:'Parking Pass / IC Card'},
-  {id:'phonecase',jp:'防水スマホケース',en:'Waterproof Phone Case'}
+ {id:'shoes',jp:'トレイル／ランニングシューズ',en:'Trail / Running Shoes',req:true},
+ {id:'apparel',jp:'速乾ウェア',en:'Quick‑dry Apparel',req:true},
+ {id:'waiver',jp:'グリップグローブ',en:'Signed Waiver',req:true},
+ {id:'confirmation',jp:'参加確認（QRコード）',en:'Race Confirmation (QR)',req:true},
+ {id:'id',jp:'写真付き身分証',en:'Photo ID',req:true},
+ {id:'gloves',jp:'グリップグローブ',en:'Grip Gloves'},
+ {id:'headband',jp:'ヘッドバンド／バフ',en:'Headband / Buff'},
+ {id:'sunglasses',jp:'サングラス',en:'Sunglasses'},
+ {id:'hydration',jp:'ハイドレーションボトル',en:'Hydration Flask'},
+ {id:'gel',jp:'エナジージェル',en:'Energy Gel'},
+ {id:'salt',jp:'塩タブレット',en:'Salt Tabs'},
+ {id:'towel',jp:'ハンドタオル',en:'Hand Towel'},
+ {id:'change',jp:'着替え',en:'Change of Clothes'},
+ {id:'sandal',jp:'サンダル',en:'Sandals'},
+ {id:'ice',jp:'アイシングスプレー／テープ',en:'Ice Spray / Tape'},
+ {id:'sunblock',jp:'日焼け止め',en:'Sunblock'},
+ {id:'ticket',jp:'駐車券／交通ICカード',en:'Parking Pass / IC Card'},
+ {id:'phonecase',jp:'防水スマホケース',en:'Waterproof Phone Case'}
 ];
 
-let lang='jp';
-const texts={
-  jp:{reqSec:'必須アイテム',optSec:'任意アイテム',reqLabel:'必須',hide:'完了を隠す',notify:'忘れ物を確認',popup:'忘れ物チェック',noMiss:'忘れ物はありません！',switch:'EN',close:'閉じる',title:'スパルタンレース持ち物リスト'},
-  en:{reqSec:'Required Items',optSec:'Optional Items',reqLabel:'REQ',hide:'Hide checked',notify:'Check Missing',popup:"Don't Forget",noMiss:'All set!',switch:'JP',close:'Close',title:'Spartan Race Gear Checklist'}
+// ===== State =====
+let state=load();
+let lang=state.lang||'en';
+
+const TXT={
+ jp:{req:'必須アイテム',opt:'任意アイテム',reqLbl:'必須',hide:'完了を隠す',notify:'忘れ物を確認',popup:'忘れ物チェック',noMiss:'忘れ物はありません！',switch:'EN',close:'閉じる',title:'スパルタンレース持ち物リスト'},
+ en:{req:'Required Items',opt:'Optional Items',reqLbl:'REQ',hide:'Hide checked',notify:'Check Missing',popup:"Don't Forget",noMiss:'All set!',switch:'JP',close:'Close',title:'Spartan Race Gear Checklist'}
 };
 
 // ===== Elements =====
-const accordion=document.getElementById('accordion');
-const langBtn   =document.getElementById('lang-btn');
-const hideChk   =document.querySelector('#hide-done input');
-const notifyBtn =document.getElementById('notify-btn');
-const popup     =document.getElementById('popup');
-const popupContent=document.getElementById('popup-content');
-const closeBtn  =document.getElementById('close-btn');
+const acc=document.getElementById('accordion');
+const langBtn=document.getElementById('lang-btn');
+const hideChk=document.querySelector('#hide-done input');
+const notifBtn=document.getElementById('notify-btn');
+const popup=document.getElementById('popup');
+const popContent=document.getElementById('popup-content');
+const closeBtn=document.getElementById('close-btn');
 
-// ===== Functions =====
-function buildAccordion(state={reqOpen:true,optOpen:true}){
-  accordion.innerHTML='';
-  const t=texts[lang];
+// ===== Render functions =====
+function render(){
+  document.documentElement.lang=lang==='jp'?'ja':'en';
+  const t=TXT[lang];
+  document.getElementById('page-title').textContent=t.title;
+  langBtn.textContent=t.switch;
+  notifBtn.textContent=t.notify;
+  document.querySelector('#hide-done').childNodes[1].textContent=t.hide;
+  document.getElementById('popup-title').textContent=t.popup;
+  closeBtn.textContent=t.close;
+
+  // Build accordion
+  acc.innerHTML='';
   const sections=[
-    {key:'reqOpen',title:`${t.reqSec}<span class='req-tag'>${t.reqLabel}</span>`,items:items.filter(i=>i.req)},
-    {key:'optOpen',title:t.optSec,items:items.filter(i=>!i.req)}
+    {key:'reqOpen',title:`${t.req}<span class='req-tag'>${t.reqLbl}</span>`,items:items.filter(i=>i.req)},
+    {key:'optOpen',title:t.opt,items:items.filter(i=>!i.req)}
   ];
   sections.forEach(sec=>{
-    const det=document.createElement('details');det.open=state[sec.key];
-    const sum=document.createElement('summary');sum.innerHTML=sec.title;
-    det.append(sum);
+    const det=document.createElement('details');det.open=state[sec.key]??false;
+    det.addEventListener('toggle',()=>{state[sec.key]=det.open;save(state);});
+    const sum=document.createElement('summary');sum.innerHTML=sec.title;det.append(sum);
     const ul=document.createElement('ul');ul.className='section-list';
     sec.items.forEach(it=>{
       const li=document.createElement('li');li.className='item';
-      const cb=document.createElement('input');cb.type='checkbox';cb.id='item-'+it.id;
-      const lab=document.createElement('label');lab.setAttribute('for',cb.id);
-      lab.textContent=it[lang];
+      const cb=document.createElement('input');cb.type='checkbox';cb.id='item-'+it.id;cb.checked=state.checked?.includes(it.id)||false;
+      cb.addEventListener('change',()=>{state.checked=[...acc.querySelectorAll('.item input')].filter(c=>c.checked).map(c=>c.id.replace('item-',''));save(state);applyHide();});
+      const lab=document.createElement('label');lab.htmlFor=cb.id;lab.textContent=it[lang];
       li.append(cb,lab);
       ul.append(li);
     });
     det.append(ul);
-    accordion.append(det);
+    acc.append(det);
   });
+  hideChk.checked=state.hideDone||false;
   applyHide();
 }
 
-function getOpenState(){const [req,opt]=accordion.querySelectorAll('details');return{reqOpen:req?.open,optOpen:opt?.open};}
+function applyHide(){
+  state.hideDone=hideChk.checked;save(state);
+  acc.querySelectorAll('.item').forEach(li=>li.classList.toggle('hidden',state.hideDone && li.querySelector('input').checked));
+}
 
-function applyHide(){const hide=hideChk.checked;accordion.querySelectorAll('.item').forEach(li=>{li.classList.toggle('hidden',hide && li.querySelector('input').checked);});}
+// ===== Popup =====
+function showMissing(){
+  const t=TXT[lang];
+  const miss=[...acc.querySelectorAll('.item input')].filter(c=>!c.checked).map(c=>c.nextElementSibling.textContent);
+  popContent.innerHTML=miss.length?`<ul>${miss.map(m=>`<li>${m}</li>`).join('')}</ul>`:`<p style='font-size:1.2rem;'>${t.noMiss}</p>`;
+  popup.classList.add('show');
+}
 
-function switchLang(){const st=getOpenState();lang=lang==='jp'?'en':'jp';const t=texts[lang];document.documentElement.lang=lang==='jp'?'ja':'en';document.getElementById('page-title').textContent=t.title;langBtn.textContent=t.switch;document.querySelector('#hide-done').childNodes[1].textContent=t.hide;notifyBtn.textContent=t.notify;document.getElementById('popup-title').textContent=t.popup;closeBtn.textContent=t.close;buildAccordion(st);}
-
-function showMissing(){const t=texts[lang];const missing=[...accordion.querySelectorAll('.item input')].filter(cb=>!cb.checked).map(cb=>cb.nextElementSibling.textContent.trim());popupContent.innerHTML=missing.length?`<ul>${missing.map(m=>`<li>${m}</li>`).join('')}</ul>`:`<p style='font-size:1.2rem;'>${t.noMiss}</p>`;popup.classList.add('show');}
-
-// ===== Event listeners =====
-langBtn.addEventListener('click',switchLang);
+// ===== Event bindings =====
+langBtn.addEventListener('click',()=>{lang=lang==='jp'?'en':'jp';state.lang=lang;save(state);render();});
 hideChk.addEventListener('change',applyHide);
-accordion.addEventListener('change',e=>{if(e.target.matches('input'))applyHide();});
-notifyBtn.addEventListener('click',showMissing);
+notifBtn.addEventListener('click',showMissing);
 closeBtn.addEventListener('click',()=>popup.classList.remove('show'));
 popup.addEventListener('click',e=>{if(e.target===popup)popup.classList.remove('show');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')popup.classList.remove('show');});
 
 // ===== Init =====
-buildAccordion();
+render();
 </script>
 </body>
 </html>
