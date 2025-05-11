@@ -1,0 +1,232 @@
+:root {
+  --primary: #c62828;
+  --danger: #ef5350;
+  --bg: #111;
+  --panel: #1d1d1d;
+  --text: #e0e0e0;
+  --req: #ffca28;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Bebas Neue', sans-serif;
+  background: var(--bg) url('https://images.unsplash.com/photo-1452626038306-7dbff8b4a081?auto=format&fit=crop&w=1500&q=80') center/cover fixed;
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2rem 1rem 6rem;
+  backdrop-filter: brightness(.6);
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* タイトル中央揃え */
+#page-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--primary);
+}
+
+/* controls */
+#controls {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: nowrap;
+}
+#notify-btn,
+#lang-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  background: #000;
+  color: var(--text);
+  font-size: clamp(.8rem, 4vw, 1rem);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .2s;
+}
+#notify-btn { width: 180px; }
+#lang-btn   { width:  78px; }
+#hide-done {
+  flex: 0 0 160px;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+#hide-done input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary);
+}
+#notify-btn:hover,
+#lang-btn:hover {
+  opacity: .85;
+}
+
+/* accordion */
+details {
+  margin-bottom: .8rem;
+  background: rgba(0,0,0,.45);
+  border-left: 4px solid var(--primary);
+  border-radius: 6px;
+  backdrop-filter: blur(2px);
+}
+summary {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 2.2rem 0 1rem;
+  font-size: 1.25rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--primary);
+  cursor: pointer;
+}
+summary::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-left-color: var(--text);
+  transform: translateY(-50%);
+  transition: transform .25s;
+}
+details[open] summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+ul.section-list {
+  list-style: none;
+  margin: 0;
+  padding: .4rem .8rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+}
+li.item {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  background: rgba(0,0,0,.55);
+  padding: 0 .75rem;
+  height: 46px;
+  border-radius: 4px;
+}
+li.item input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--primary);
+}
+li.item label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+li.item input:checked + label {
+  opacity: .35;
+  text-decoration: line-through;
+}
+.req-tag {
+  background: var(--req);
+  color: #000;
+  font-size: .75rem;
+  padding: .05rem .32rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+/* popup */
+#popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: rgba(0,0,0,.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+#popup.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+#popup-box {
+  background: var(--panel);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.8);
+  width: min(92vw, 400px);
+  margin-top: 100px;
+  max-height: 90vh;
+  padding: 1.6rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: background .4s ease;
+}
+#popup-box.complete {
+  background: url('https://images.unsplash.com/photo-1520220051596-fd2aa4d6f55f?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
+}
+#popup-title {
+  font-size: 1.6rem;
+  color: var(--primary);
+  text-align: center;
+  margin: 0;
+}
+#popup-title.hidden {
+  display: none;
+}
+#popup-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  max-height: calc(1.4em * 7 + .35rem * 6);
+}
+#popup-box.complete #popup-content {
+  overflow: hidden;
+}
+.complete-msg {
+  font-family: 'Bebas Neue', sans-serif;
+  text-align: center;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 0 8px #000;
+}
+.complete-msg .big {
+  font-size: 2rem;
+  letter-spacing: .05em;
+}
+.complete-msg .small {
+  font-size: 1.1rem;
+  letter-spacing: .05em;
+}
+#close-btn {
+  align-self: center;
+  width: 120px;
+  padding: .55rem 1.4rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--danger);
+  color: #fff;
+  cursor: pointer;
+}
