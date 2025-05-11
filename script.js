@@ -43,9 +43,15 @@
       notify: '忘れ物を確認',
       popup: '忘れ物チェック',
       completeBig: 'MISSION COMPLETE',
+<<<<<<< HEAD
       completeSmall: 'SPATENA 始動',
       switch: 'EN',
       title: 'スパルタンレース持ち物リスト'
+=======
+      completeSmall: 'SPATENA2025 始動',
+      switch: 'EN',
+      title: 'Spartan Race Gear Checklist'
+>>>>>>> 3dc2977 (更新内容の説明)
     },
     en: {
       req: 'Required Items',
@@ -55,7 +61,11 @@
       notify: 'Check Missing',
       popup: 'Checklist',
       completeBig: 'MISSION COMPLETE',
+<<<<<<< HEAD
       completeSmall: 'SPATENA LAUNCH',
+=======
+      completeSmall: 'SPATENA2025 始動',
+>>>>>>> 3dc2977 (更新内容の説明)
       switch: 'JP',
       title: 'Spartan Race Gear Checklist'
     }
