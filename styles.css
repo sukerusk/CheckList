@@ -178,7 +178,7 @@ li.item input:checked + label {
   border-radius: 8px;
   box-shadow: 0 8px 28px rgba(0,0,0,.8);
   width: min(92vw, 400px);
-  margin-top: 200px;
+  margin-top: 300px;
   max-height: 90vh;
   padding: 1.6rem 1.4rem;
   display: flex;
