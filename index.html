@@ -10,9 +10,7 @@
     :root{--primary:#c62828;--danger:#ef5350;--bg:#111;--panel:#1d1d1d;--text:#e0e0e0;--req:#ffca28;}
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Bebas Neue',sans-serif;background:var(--bg) url('https://images.unsplash.com/photo-1452626038306-7dbff8b4a081?auto=format&fit=crop&w=1500&q=80') center/cover fixed;color:var(--text);min-height:100vh;padding:2rem 1rem 6rem;backdrop-filter:brightness(.6);}body::-webkit-scrollbar{display:none;}
-    /* logo */
-    #logo{position:fixed;top:10px;left:10px;width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 0 4px #000);z-index:9;}
-    h1{font-family:'Noto Sans JP','Bebas Neue',sans-serif;font-size:clamp(1.4rem,7vw,2rem);color:var(--primary);text-shadow:0 0 6px #000;white-space:nowrap;text-align:center;margin-bottom:1rem;line-height:1.1;}
+   
     /* controls */
     #controls{display:flex;justify-content:center;gap:.75rem;margin-bottom:1.2rem;flex-wrap:nowrap;}
     #notify-btn,#lang-btn{display:flex;align-items:center;justify-content:center;height:42px;border:2px solid var(--primary);border-radius:4px;background:#000;color:var(--text);font-size:clamp(.8rem,4vw,1rem);cursor:pointer;white-space:nowrap;transition:opacity .2s;}#notify-btn{width:180px;}#lang-btn{width:78px;}#hide-done{flex:0 0 160px;display:flex;align-items:center;gap:.4rem;white-space:nowrap;font-size:1rem;}#hide-done input{width:1rem;height:1rem;accent-color:var(--primary);}#notify-btn:hover,#lang-btn:hover{opacity:.85;}
@@ -33,7 +31,7 @@
   </style>
 </head>
 <body>
-  <img id="logo" src="https://raw.githubusercontent.com/SpartanRace/media-kit/master/logos/spartan_logo_vert_white.png" alt="logo">
+
   <h1 id="page-title"></h1>
   <div id="controls"><button id="notify-btn"></button><button id="lang-btn"></button><label id="hide-done"><input type="checkbox"><span id="hide-text"></span></label></div>
   <div id="accordion"></div>
