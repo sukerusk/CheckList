@@ -28,7 +28,7 @@ body::-webkit-scrollbar {
   text-align: center;
   font-size: 2rem;
   margin-bottom: 1rem;
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   color: var(--primary);
 }
 
@@ -54,6 +54,7 @@ body::-webkit-scrollbar {
   cursor: pointer;
   white-space: nowrap;
   transition: opacity .2s;
+  font-family: 'Bebas Neue', sans-serif;
 }
 #notify-btn { width: 180px; }
 #lang-btn   { width:  78px; }
@@ -90,7 +91,7 @@ summary {
   align-items: center;
   padding: 0 2.2rem 0 1rem;
   font-size: 1.25rem;
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   color: var(--primary);
   cursor: pointer;
 }
@@ -136,7 +137,7 @@ li.item label {
   display: flex;
   align-items: center;
   gap: .45rem;
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
@@ -177,7 +178,7 @@ li.item input:checked + label {
   border-radius: 8px;
   box-shadow: 0 8px 28px rgba(0,0,0,.8);
   width: min(92vw, 400px);
-  margin-top: 100px;
+  margin-top: 200px;
   max-height: 90vh;
   padding: 1.6rem 1.4rem;
   display: flex;
@@ -186,7 +187,7 @@ li.item input:checked + label {
   transition: background .4s ease;
 }
 #popup-box.complete {
-  background: url('https://images.unsplash.com/photo-1520220051596-fd2aa4d6f55f?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
+  background: url('IMG_5028.jpg') center/cover no-repeat;
 }
 #popup-title {
   font-size: 1.6rem;
@@ -209,7 +210,11 @@ li.item input:checked + label {
   font-family: 'Bebas Neue', sans-serif;
   text-align: center;
   line-height: 1.2;
-  color: #fff;
+  -webkit-text-stroke: 2px black;
+  paint-order: stroke;
+  background-size: 0% 100%;
+  animation: bgWiden 1s ease-out forwards;
+  color: #ecf407;
   text-shadow: 0 0 8px #000;
 }
 .complete-msg .big {
