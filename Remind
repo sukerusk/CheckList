@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spartan Race Gear Checklist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    /* ——— Theme Colors ——— */
+    :root{
+      --primary:#c62828; /* Spartan red */
+      --danger:#ef5350;
+      --bg:#111;        /* near‑black background */
+      --panel:#1d1d1d;  /* dark card */
+      --text:#e0e0e0;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family: 'Bebas Neue', sans-serif;
+      background:var(--bg) url('https://images.unsplash.com/photo-1452626038306-7dbff8b4a081?auto=format&fit=crop&w=1500&q=80') center/cover fixed;
+      color:var(--text);
+      min-height:100vh;
+      padding:2rem 1rem 6rem;
+      backdrop-filter:brightness(.6);
+    }
+    h1{
+      text-align:center;
+      font-size:2.4rem;
+      letter-spacing:.05em;
+      color:var(--primary);
+      margin-bottom:1rem;
+      text-shadow:0 0 6px rgba(0,0,0,.6);
+    }
+
+    /* ——— Controls ——— */
+    #controls{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+    #search{
+      flex:1 1 220px;
+      padding:.55rem .9rem;
+      font-size:1rem;
+      border:2px solid var(--primary);
+      border-radius:4px;
+      background:#000; color:var(--text);
+    }
+    #hide-done{display:flex;align-items:center;gap:.4rem;font-size:1rem;cursor:pointer;user-select:none;}
+    #hide-done input{accent-color:var(--primary);width:1rem;height:1rem;}
+
+    /* ——— Accordion ——— */
+    details{margin-bottom:1rem;border-left:4px solid var(--primary);border-radius:4px;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);}
+    summary{padding:.8rem 1rem;list-style:none;cursor:pointer;font-size:1.4rem;color:var(--primary);display:flex;align-items:center;}
+    summary::after{content:'▶';margin-left:auto;transition:transform .25s;font-size:1.2rem;color:var(--text);}  
+    details[open] summary::after{transform:rotate(90deg);}  
+
+    ul.item-list{list-style:none;padding:0 1rem 1rem;display:flex;flex-direction:column;gap:.55rem;}
+    li.item{display:flex;align-items:center;gap:.5rem;}
+    li.item input{width:1.15rem;height:1.15rem;accent-color:var(--primary);} 
+    li.item label{flex:1;font-size:1.1rem;cursor:pointer;}
+    li.item.hidden{display:none;}
+
+    /* ——— Floating Action Button ——— */
+    #notify-btn{
+      position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);
+      padding:.8rem 2rem;border:none;border-radius:50px;
+      background:var(--primary);color:#fff;font-size:1.3rem;letter-spacing:.03em;
+      box-shadow:0 4px 12px rgba(0,0,0,.6);
+      cursor:pointer;transition:opacity .2s, transform .2s;
+    }
+    #notify-btn:hover{opacity:.85;transform:translateX(-50%) translateY(-2px);}  
+
+    /* ——— Popup Modal ——— */
+    #popup{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);
+      width:min(92vw,400px);
+      background:var(--panel);
+      border:2px solid var(--primary);
+      border-radius:8px;
+      box-shadow:0 8px 28px rgba(0,0,0,.8);
+      padding:1.8rem 1.5rem 1.4rem;
+      text-align:center;
+      opacity:0;pointer-events:none;
+      transition:opacity .25s, transform .25s;
+    }
+    #popup.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
+    #popup h2{font-size:1.8rem;color:var(--primary);margin-bottom:1rem;}
+    #popup ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;padding:0;margin:0 .3rem 1rem;max-height:50vh;overflow-y:auto;}
+    #popup ul li{font-size:1.2rem;border-bottom:1px solid rgba(255,255,255,.1);padding:.3rem 0;}
+    #close-btn{padding:.55rem 1.5rem;background:var(--danger);border:none;border-radius:4px;color:#fff;font-size:1.1rem;cursor:pointer;transition:opacity .2s;}
+    #close-btn:hover{opacity:.9;}
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+  </style>
+</head>
+<body>
+  <h1>SPARTAN RACE GEAR CHECKLIST</h1>
+
+  <div id="controls">
+    <input id="search" type="text" placeholder="Search gear…">
+    <label id="hide-done"><input type="checkbox">Hide checked</label>
+  </div>
+
+  <div id="list-wrapper"></div>
+
+  <button id="notify-btn">SHOW MISSING ITEMS</button>
+
+  <!-- popup -->
+  <div id="popup" role="alertdialog" aria-modal="true" aria-labelledby="popup-title">
+    <h2 id="popup-title">DON'T FORGET</h2>
+    <div id="popup-content"></div>
+    <button id="close-btn">CLOSE</button>
+  </div>
+
+  <script>
+    const master=[
+      {cat:'GEAR',id:'shoes',label:'Trail / Running Shoes'},
+      {cat:'GEAR',id:'apparel',label:'Quick‑dry Apparel'},
+      {cat:'GEAR',id:'gloves',label:'Grip Gloves'},
+      {cat:'GEAR',id:'headband',label:'Headband / Buff'},
+      {cat:'GEAR',id:'sunglasses',label:'Sunglasses'},
+      {cat:'DOCUMENTS',id:'waiver',label:'Signed Waiver'},
+      {cat:'DOCUMENTS',id:'confirmation',label:'Race Confirmation (QR)'},
+      {cat:'DOCUMENTS',id:'id',label:'Photo ID'},
+      {cat:'NUTRITION',id:'hydration',label:'Hydration Flask'},
+      {cat:'NUTRITION',id:'gel',label:'Energy Gel'},
+      {cat:'NUTRITION',id:'salt',label:'Salt Tabs'},
+      {cat:'NUTRITION',id:'towel',label:'Hand Towel'},
+      {cat:'AFTERCARE',id:'change',label:'Change of Clothes'},
+      {cat:'AFTERCARE',id:'sandal',label:'Sandals'},
+      {cat:'AFTERCARE',id:'ice',label:'Ice Spray / Tape'},
+      {cat:'EXTRA',id:'sunblock',label:'Sunblock'},
+      {cat:'EXTRA',id:'ticket',label:'Parking Pass / IC Card'},
+      {cat:'EXTRA',id:'phonecase',label:'Waterproof Phone Case'}
+    ];
+
+    const listWrapper=document.getElementById('list-wrapper');
+    const searchInput=document.getElementById('search');
+    const hideDoneChk=document.querySelector('#hide-done input');
+    const notifyBtn=document.getElementById('notify-btn');
+    const popup=document.getElementById('popup');
+    const popupContent=document.getElementById('popup-content');
+    const closeBtn=document.getElementById('close-btn');
+
+    function render(){
+      const query=searchInput.value.trim().toLowerCase();
+      const grouped={};
+      master.forEach(item=>{ (grouped[item.cat]=grouped[item.cat]||[]).push(item); });
+      listWrapper.innerHTML='';
+      Object.entries(grouped).forEach(([cat,items])=>{
+        const details=document.createElement('details');details.open=true;
+        const summary=document.createElement('summary');summary.textContent=cat;
+        const ul=document.createElement('ul');ul.className='item-list';
+        items.forEach(it=>{
+          if(query && !it.label.toLowerCase().includes(query)) return;
+          const li=document.createElement('li');li.className='item';
+          const cb=document.createElement('input');cb.type='checkbox';cb.id='item-'+it.id;
+          const label=document.createElement('label');label.setAttribute('for','item-'+it.id);label.textContent=it.label;
+          li.append(cb,label);ul.append(li);
+        });
+        if(ul.children.length){details.append(summary,ul);listWrapper.append(details);} });
+      applyHideDone();
+    }
+
+    function applyHideDone(){
+      const hideDone=hideDoneChk.checked;
+      document.querySelectorAll('.item').forEach(li=>{
+        const cb=li.querySelector('input');
+        li.classList.toggle('hidden', hideDone && cb.checked);
+      });
+    }
+
+    searchInput.addEventListener('input',render);
+    hideDoneChk.addEventListener('change',applyHideDone);
+    listWrapper.addEventListener('change',e=>{ if(e.target.matches('input')) applyHideDone(); });
+
+    notifyBtn.addEventListener('click',()=>{
+      const missing=[...document.querySelectorAll('.item input:not(:checked)')].map(cb=>cb.nextElementSibling.textContent);
+      popupContent.innerHTML=missing.length?'<ul>'+missing.map(t=>`<li>${t}</li>`).join('')+'</ul>':'<p style="font-size:1.3rem;">ALL SET!</p>';
+      popup.classList.add('show');
+    });
+    closeBtn.addEventListener('click',()=>popup.classList.remove('show'));
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') popup.classList.remove('show'); });
+
+    render();
+  </script>
+</body>
+</html>
