@@ -1,24 +1,28 @@
 (() => {
   /* ---------- data ---------- */
   const items = [
+    {id:'money',jp:'入園料（現金1,000円）',en:'Admission fee (1,000 yen in cash)',req:true},
+    {id:'id',jp:'写真付き身分証',en:'Photo ID',req:true},
+    {id:'card',jp:'保険証',en:'Insurance card',req:true},
+    {id:'confirmation',jp:'参加確認書（QRコード）',en:'Race Confirmation (QR)',req:true},
+    {id:'sunscreen',jp:'日焼け止め',en:'Sunscreen',req:true},
+    {id:'clothes',jp:'レース後の着替え',en:'Changing clothes after the race',req:true},
+    {id:'bag',jp:'ビニール袋',en:'Plastic bags',req:true},
+    {id:'salt',jp:'塩タブレット',en:'Salt Tabs',req:true},
     {id:'shoes',jp:'トレイル／ランニングシューズ',en:'Trail / Running Shoes',req:true},
     {id:'apparel',jp:'速乾ウェア',en:'Quick-dry Apparel',req:true},
-    {id:'waiver',jp:'参加同意書（署名済）',en:'Signed Waiver',req:true},
-    {id:'confirmation',jp:'参加確認（QRコード）',en:'Race Confirmation (QR)',req:true},
-    {id:'id',jp:'写真付き身分証',en:'Photo ID',req:true},
-    {id:'gloves',jp:'グリップグローブ',en:'Grip Gloves'},
-    {id:'headband',jp:'ヘッドバンド／バフ',en:'Headband / Buff'},
+    {id:'gloves',jp:'グローブ',en:'Gloves',req:true},
+    {id:'towel',jp:'タオル',en:'towel',req:true},
+    {id:'phone',jp:'スマホ',en:'iphone',req:true},
+
+    {id:'band',jp:'ザック',en:'Zac'},
     {id:'sunglasses',jp:'サングラス',en:'Sunglasses'},
     {id:'hydration',jp:'ハイドレーションボトル',en:'Hydration Flask'},
     {id:'gel',jp:'エナジージェル',en:'Energy Gel'},
-    {id:'salt',jp:'塩タブレット',en:'Salt Tabs'},
     {id:'towel',jp:'ハンドタオル',en:'Hand Towel'},
-    {id:'change',jp:'着替え',en:'Change of Clothes'},
-    {id:'sandal',jp:'サンダル',en:'Sandals'},
+    {id:'tape',jp:'絆創膏',en:'adhesive plaster'},
     {id:'ice',jp:'アイシングスプレー／テープ',en:'Ice Spray / Tape'},
-    {id:'sunblock',jp:'日焼け止め',en:'Sunblock'},
-    {id:'ticket',jp:'駐車券／交通ICカード',en:'Parking Pass / IC Card'},
-    {id:'phonecase',jp:'防水スマホケース',en:'Waterproof Phone Case'}
+    {id:'camera',jp:'ゴープロ',en:'GoPro'}
   ];
 
   /* ---------- state ---------- */
