@@ -173,8 +173,15 @@
     if (miss.length) {
       box.classList.remove('complete');
       popTitle.classList.remove('hidden');
-      popContent.innerHTML = '<ul>' + miss.map(m => `<li>${m[lang]}</li>`).join('') + '</ul>';
-    } else {
+      // やる気（id === 'Power'）だけが未チェックの場合は
+      // 「大切なものを忘れています」のみを表示
+      if (miss.length === 1 && miss[0].id === 'Power') {
+        popContent.innerHTML = '大切なものを忘れていますよ';
+      } else {
+        popContent.innerHTML = '<ul>' +
+          miss.map(m => `<li>${m[lang]}</li>`).join('') +
+          '</ul>';
+      }    } else {
       box.classList.add('complete');
       popTitle.classList.add('hidden');
       popContent.innerHTML =
