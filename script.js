@@ -20,7 +20,7 @@
     {id:'sunglasses',jp:'サングラス',en:'Sunglasses'},
     {id:'hydration',jp:'ハイドレーションボトル',en:'Hydration Flask'},
     {id:'gel',jp:'エナジージェル',en:'Energy Gel'},
-    {id:'towel',jp:'ハンカチ',en:'Hand Towel'},
+    {id:'hand',jp:'ハンカチ',en:'Hand Towel'},
     {id:'tape',jp:'絆創膏',en:'adhesive plaster'},
     {id:'ice',jp:'アイシングスプレー／テープ',en:'Ice Spray / Tape'},
     {id:'lens',jp:'替えのコンタクト',en:'Contact lens'},
